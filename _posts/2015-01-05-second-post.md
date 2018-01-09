@@ -9,4 +9,5 @@ This is my second post, how exciting!
 
 ```html
 <h1>Hello World</h1>
+<p>This is a paragraph.</p>
 ```
