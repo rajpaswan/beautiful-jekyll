@@ -7,45 +7,60 @@
 
 /* Global styles
 -------------------------*/
+
 /* apply a natural box layout model to all elements, but allowing components to change */
+
 html {
   box-sizing: border-box;
 }
-*, *:before, *:after {
+
+*,
+*:before,
+*:after {
   box-sizing: inherit;
 }
+
 body {
   font-family: 'Open Sans', sans-serif;
   margin: 0;
 }
-h1, h2 {
+
+h1,
+h2 {
   font-family: 'Caveat', cursive;
   font-weight: 400;
 }
+
 h1 {
   font-size: 80px;
 }
+
 h2 {
   font-size: 40px;
   margin-top: 0;
 }
+
 a {
   color: #ff715b;
 }
+
 a:hover {
   text-decoration: none;
 }
+
 .content-wrap {
   max-width: 950px;
   margin: 0 auto;
   padding: 50px;
   overflow: hidden;
 }
+
 .col-narrow {
   width: 30%;
   float: left;
   min-height: 175px;
 }
+
 .col-wide {
   width: 70%;
   float: left;
@@ -53,41 +68,72 @@ a:hover {
   min-height: 175px;
 }
 
-
 /* Header and Footer
 -------------------------*/
-header, footer {
+nav {
+  position: fixed;
+  width: 100%;
+  top: 0;
+}
+
+header,
+footer {
   background: #2d3142;
   color: #199ba7;
 }
-/* hesea green */
-header h1, header h2 {
+
+header {
+  margin-top: 60px;
+}
+
+header h1,
+header h2 {
   color: #e8e8e8;
   margin: 0;
 }
+
+.navbar {
+  text-align: center;
+  background: #e8e8e8;
+}
+
+.navbar a {
+  margin: 10px;
+  padding: 10px;
+  display: inline-block;
+  color:#2d3142;
+  background: #ff715b;
+  border-radius: 5px;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
 .profile-img {
   border-radius: 50%;
 }
+
 /* footer */
+
 footer {
   text-align: center;
 }
+
 .contact-info a {
   padding: 10px;
+  font-size: 3em;
   display: inline-block;
 }
 
-
-
 /* Work Experience
 -------------------------*/
+
 .work {
   background: #e8e8e8;
 }
 
 /* Education
 -------------------------*/
+
 .education {
   background: #199ba7;
 }
-sea g
