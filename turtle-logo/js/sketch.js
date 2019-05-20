@@ -6,15 +6,15 @@ let historyCount = 0;
 let historyIndex = -1;
 
 function preload() {
-  historyCount = window.localStorage.getItem('HISTORY_COUNT') || 0;
+  historyCount = localStorage.getItem('HISTORY_COUNT') || 0;
   historyIndex = historyCount > 0 ? historyCount : -1;
-  history = JSON.parse(window.localStorage.getItem('HISTORY_ARRAY') || '[]');
+  history = JSON.parse(localStorage.getItem('HISTORY_ARRAY') || '[]');
 }
 
 function setup() {
-  createCanvas(window.windowWidth, window.windowHeight);
-  canvas1 = createGraphics(window.windowWidth, window.windowHeight);
-  canvas2 = createGraphics(window.windowWidth, window.windowHeight);
+  createCanvas(windowWidth, windowHeight);
+  canvas1 = createGraphics(windowWidth, windowHeight);
+  canvas2 = createGraphics(windowWidth, windowHeight);
 
   turtle = new Turtle(canvas1, canvas2);
 
@@ -52,8 +52,8 @@ function keyPressed() {
         }
       }
       if (historyCount > 0) {
-        window.localStorage.setItem('HISTORY_COUNT', historyCount);
-        window.localStorage.setItem('HISTORY_ARRAY', JSON.stringify(history));
+        localStorage.setItem('HISTORY_COUNT', historyCount);
+        localStorage.setItem('HISTORY_ARRAY', JSON.stringify(history));
       }
     }
   } else if (keyCode === UP_ARROW) {
@@ -69,4 +69,11 @@ function keyPressed() {
       cmdInput.value(exp);
     }
   }
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+  //canvas1.resizeCanvas(windowWidth, windowHeight);
+  //canvas2.resizeCanvas(windowWidth, windowHeight);
+  redraw();
 }
