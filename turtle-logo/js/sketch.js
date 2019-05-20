@@ -1,0 +1,72 @@
+let turtle;
+let canvas1, canvas2;
+let cmdInput, posSpan;
+let history = [];
+let historyCount = 0;
+let historyIndex = -1;
+
+function preload() {
+  historyCount = window.localStorage.getItem('HISTORY_COUNT') || 0;
+  historyIndex = historyCount > 0 ? historyCount : -1;
+  history = JSON.parse(window.localStorage.getItem('HISTORY_ARRAY') || '[]');
+}
+
+function setup() {
+  createCanvas(window.windowWidth, window.windowHeight);
+  canvas1 = createGraphics(window.windowWidth, window.windowHeight);
+  canvas2 = createGraphics(window.windowWidth, window.windowHeight);
+
+  turtle = new Turtle(canvas1, canvas2);
+
+  cmdInput = createInput('', 'text');
+  cmdInput.elt.id = 'command';
+  cmdInput.elt.placeholder = 'your code here';
+  cmdInput.elt.focus();
+
+  posSpan = createSpan('(0.00, 0.00) : 90');
+  posSpan.elt.id = 'position';
+}
+
+function draw() {
+  background('#404040');
+  image(canvas1, 0, 0);
+  image(canvas2, 0, 0);
+}
+
+function keyPressed() {
+  if (keyCode === ENTER) {
+    let exp = cmdInput.value().trim();
+    if (exp !== '') {
+      turtle.execute(exp);
+      turtle.updatePosition(posSpan);
+      if (historyCount == 0) {
+        history.push(exp);
+        historyCount++;
+        historyIndex = 0;
+      } else {
+        let last = history[historyCount - 1];
+        if (last !== exp) {
+          history.push(exp);
+          historyCount++;
+          historyIndex = historyIndex;
+        }
+      }
+      if (historyCount > 0) {
+        window.localStorage.setItem('HISTORY_COUNT', historyCount);
+        window.localStorage.setItem('HISTORY_ARRAY', JSON.stringify(history));
+      }
+    }
+  } else if (keyCode === UP_ARROW) {
+    if (historyCount > 0 && historyIndex > 0) {
+      historyIndex = historyIndex - 1;
+      let exp = history[historyIndex];
+      cmdInput.value(exp);
+    }
+  } else if (keyCode === DOWN_ARROW) {
+    if (historyCount > 0 && historyIndex < historyCount - 1) {
+      historyIndex = historyIndex + 1;
+      let exp = history[historyIndex];
+      cmdInput.value(exp);
+    }
+  }
+}

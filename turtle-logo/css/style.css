@@ -1,0 +1,38 @@
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+canvas {
+  display: block;
+}
+
+input#command {
+  position: absolute;
+  box-sizing: border-box;
+  width: 100%;
+  bottom: 0;
+  font-size: large;
+  font-weight: bold;
+  font-family: 'Consolas','FreeMono';
+  border: solid transparent 8px;
+  background-color: rgba(0, 0, 0, 10%);
+  color: white;
+}
+
+input#command:focus {
+  outline-color: transparent;
+}
+
+span#position {
+  position: absolute;
+  box-sizing: border-box;
+  top: 0;
+  right: 0;
+  padding: 8px;
+  font-size: large;
+  font-weight: bold;
+  font-family: 'Consolas','FreeMono';
+  background-color: rgba(0, 0, 0, 10%);
+  color: white;
+}
