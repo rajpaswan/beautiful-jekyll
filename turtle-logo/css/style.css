@@ -17,7 +17,7 @@ input#command {
   font-family: 'Consolas','FreeMono';
   border: solid transparent 8px;
   background-color: rgba(0, 0, 0, 10%);
-  color: white;
+  color: black;
 }
 
 input#command:focus {
@@ -34,5 +34,5 @@ span#position {
   font-weight: bold;
   font-family: 'Consolas','FreeMono';
   background-color: rgba(0, 0, 0, 10%);
-  color: white;
+  color: black;
 }

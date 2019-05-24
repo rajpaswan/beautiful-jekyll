@@ -1,6 +1,6 @@
 let turtle;
 let canvas1, canvas2;
-let cmdInput, posSpan;
+let cmdInput, posText;
 let history = [];
 let historyCount = 0;
 let historyIndex = -1;
@@ -23,12 +23,12 @@ function setup() {
   cmdInput.elt.placeholder = 'your code here';
   cmdInput.elt.focus();
 
-  posSpan = createSpan('(0.00, 0.00) : 90');
-  posSpan.elt.id = 'position';
+  posText = createSpan('(0.00, 0.00) : 90');
+  posText.elt.id = 'position';
 }
 
 function draw() {
-  background('#404040');
+  background('transparent');
   image(canvas1, 0, 0);
   image(canvas2, 0, 0);
 }
@@ -38,7 +38,7 @@ function keyPressed() {
     let exp = cmdInput.value().trim();
     if (exp !== '') {
       turtle.execute(exp);
-      turtle.updatePosition(posSpan);
+      turtle.updatePosition(posText);
       if (historyCount == 0) {
         history.push(exp);
         historyCount++;

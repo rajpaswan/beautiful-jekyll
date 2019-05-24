@@ -6,11 +6,11 @@ class Turtle {
         this._x = x || width / 2;       // center x
         this._y = y || height / 2;      // center y
         this._dir = dir || 90;          // direction
-        this._fg = fg || '#ffffff';     // foreground color
-        this._bg = bg || '#404040';     // background color
+        this._fg = fg || 'black';       // foreground color
+        this._bg = bg || 'transparent'; // background color
         this._ts = true;                // turtle status
         this._ps = true;                // pen status
-        this._pt = 2;                   // pen thickness
+        this._pt = 4;                   // pen thickness
         this.updateTurtle();
     }
 
