@@ -75,12 +75,6 @@ class Turtle {
         this._pt = thickness;
     }
 
-    backgroundColor(col) {
-        col = this.getVariable(col);
-        this._bc = col;
-        this._cd.background(color(this._bc));
-    }
-
     home() {
         this._x = width / 2;
         this._y = height / 2;
@@ -88,6 +82,12 @@ class Turtle {
 
     clear() {
         this._cd.clear();
+        this._cd.background(color(this._bc));
+    }
+
+    backgroundColor(col) {
+        col = this.getVariable(col);
+        this._bc = col;
         this._cd.background(color(this._bc));
     }
 
@@ -136,10 +136,10 @@ class Turtle {
 
     export(filename) {
         filename = this.getVariable(filename);
-        saveCanvas(this._cd, filename, 'png');
+        exportPNG(this._c1, filename);
     }
 
-    setVariable(name, value) {
+    putVariable(name, value) {
         this._v[name] = value;
     }
 
@@ -160,108 +160,10 @@ class Turtle {
 
     execute(exp) {
         let sanitized = exp.replace(/=/g, ' = ').replace(/\[/g, ' [ ').replace(/\]/g, ' ] ').replace(/\s+/g, ' ').trim();
-        let tokens = this.tokenize(sanitized);
+        let tokens = tokenize(sanitized);
         this.run(tokens);
         this.adjustTurtle();
         this.updateTurtle();
-    }
-
-    tokenize(exp) {
-        let tokens = exp.split(' ');
-        let commands = [];
-        let index = 0;
-        while (index < tokens.length) {
-            let cmd, steps, angle, times, col, thickness, filename, startIndex, endIndex, innerExp, name, value;
-            switch (tokens[index]) {
-                case 'home':
-                case 'cs':
-                case 'st':
-                case 'ht':
-                case 'pu':
-                case 'pd':
-                    cmd = tokens[index];
-                    commands.push({
-                        cmd: cmd
-                    });
-                    break;
-                case 'pc':
-                case 'bc':
-                    cmd = tokens[index];
-                    col = tokens[index + 1];
-                    commands.push({
-                        cmd: cmd,
-                        col: col
-                    });
-                    break;
-                case 'pt':
-                    cmd = tokens[index];
-                    thickness = tokens[index + 1];
-                    commands.push({
-                        cmd: cmd,
-                        thickness: thickness
-                    });
-                    break;
-                case 'fd':
-                case 'bk':
-                    cmd = tokens[index];
-                    steps = tokens[index + 1];
-                    commands.push({
-                        cmd: cmd,
-                        steps: steps
-                    });
-                    index++;
-                    break;
-                case 'lt':
-                case 'rt':
-                    cmd = tokens[index];
-                    angle = tokens[index + 1];
-                    commands.push({
-                        cmd: cmd,
-                        angle: angle
-                    });
-                    index++;
-                    break;
-                case 'export':
-                    cmd = tokens[index];
-                    filename = tokens[index + 1];
-                    commands.push({
-                        cmd: cmd,
-                        filename: filename
-                    });
-                    index++;
-                    break;
-                case 'repeat':
-                    cmd = tokens[index];
-                    times = tokens[index + 1];
-                    startIndex = index + 2;
-                    endIndex = this.findEndIndex(tokens, startIndex);
-                    if (endIndex != -1) {
-                        innerExp = tokens.slice(startIndex + 1, endIndex).join(' ');
-                        commands.push({
-                            cmd: cmd,
-                            times: times,
-                            exp: innerExp
-                        });
-                        index = endIndex;
-                    }
-                    break;
-                case 'var':
-                    cmd = tokens[index];
-                    name = tokens[index + 1];
-                    value = tokens[index + 3];
-                    commands.push({
-                        cmd: cmd,
-                        name: name,
-                        value: value
-                    });
-                    index += 3;
-                    break;
-                default:
-                    console.log('unknown token:', tokens[index]);
-            }
-            index++;
-        }
-        return commands;
     }
 
     run(commands) {
@@ -313,28 +215,12 @@ class Turtle {
                     this.repeat(command.times, command.exp);
                     break;
                 case 'var':
-                    this.setVariable(command.name, command.value);
+                    this.putVariable(command.name, command.value);
                     break;
                 default:
-
                     break;
             }
         });
     }
 
-    findEndIndex(args, start) {
-        let stack = [];
-        stack.push(start);
-        for (let index = start + 1; index < args.length; ++index) {
-            if (args[index] === '[') {
-                stack.push(index);
-            } else if (stack.length > 0 && args[stack[stack.length - 1]] === '[' && args[index] === ']') {
-                stack.pop();
-            }
-            if (stack.length === 0) {
-                return index;
-            }
-        }
-        return -1;
-    }
 }
