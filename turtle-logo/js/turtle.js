@@ -1,16 +1,18 @@
 class Turtle {
 
-    constructor(cd, ct, x, y, dir, fg, bg) {
+    constructor(cd, ct, x, y, d, pc, bc) {
         this._cd = cd;                  // canvas for drawing
         this._ct = ct;                  // canvas for turtle
-        this._x = x || width / 2;       // center x
-        this._y = y || height / 2;      // center y
-        this._dir = dir || 90;          // direction
-        this._fg = fg || 'black';       // foreground color
-        this._bg = bg || 'transparent'; // background color
+        this._x = x || width / 2;       // turtle x
+        this._y = y || height / 2;      // turtle y
+        this._d = d || 90;              // turtle direction
+        this._pc = pc || 'black';       // pen color
+        this._bc = bc || 'transparent'; // background color
         this._ts = true;                // turtle status
         this._ps = true;                // pen status
         this._pt = 4;                   // pen thickness
+        this._v = {};                   // variables
+        this._m = {};                   // methods 
         this.updateTurtle();
     }
 
@@ -26,8 +28,8 @@ class Turtle {
         this._ct.clear();
         if (this._ts) {
             let size = 3 * this._pt;
-            let edgeCol = color(this._fg);
-            let bodyCol = color(this._fg);
+            let edgeCol = color(this._pc);
+            let bodyCol = color(this._pc);
             bodyCol.setAlpha(128);
             this._ct.push();
             this._ct.translate(this._x, this._y);
@@ -36,13 +38,22 @@ class Turtle {
             this._ct.fill(bodyCol);
             this._ct.strokeWeight(this._pt);
             for (let i = 0; i <= 3; ++i) {
-                let theta = radians(this._dir) + i * TWO_PI / 3;
+                let theta = radians(this._d) + i * TWO_PI / 3;
                 let x = size * cos(theta);
                 let y = size * sin(-theta);
                 this._ct.vertex(x, y);
             }
             this._ct.endShape();
             this._ct.pop();
+        }
+    }
+
+    adjustTurtle() {
+        if (this._d >= 360) {
+            this._d = this._d % 360;
+        }
+        if (this._d < 0) {
+            this._d = 360 - (-this._d % 360);
         }
     }
 
@@ -55,16 +66,19 @@ class Turtle {
     }
 
     penColor(col) {
-        this._fg = col;
+        col = this.getVariable(col);
+        this._pc = col;
     }
 
     penThickness(thickness) {
+        thickness = this.getVariable(thickness);
         this._pt = thickness;
     }
 
     backgroundColor(col) {
-        this._bg = col;
-        this._cd.background(color(this._bg));
+        col = this.getVariable(col);
+        this._bc = col;
+        this._cd.background(color(this._bc));
     }
 
     home() {
@@ -74,59 +88,81 @@ class Turtle {
 
     clear() {
         this._cd.clear();
-        this._cd.background(color(this._bg));
+        this._cd.background(color(this._bc));
     }
 
     forward(steps) {
+        steps = this.getVariable(steps);
         let px = this._x;
         let py = this._y;
-        this._x += steps * cos(radians(this._dir));
-        this._y += steps * sin(-radians(this._dir));
+        this._x += steps * cos(radians(this._d));
+        this._y += steps * sin(-radians(this._d));
         if (this._ps) {
-            this._cd.stroke(this._fg);
+            this._cd.stroke(this._pc);
             this._cd.strokeWeight(this._pt);
             this._cd.line(this._x, this._y, px, py);
         }
     }
 
     backward(steps) {
+        steps = this.getVariable(steps);
         let px = this._x;
         let py = this._y;
-        this._x -= steps * cos(radians(this._dir));
-        this._y -= steps * sin(-radians(this._dir));
+        this._x -= steps * cos(radians(this._d));
+        this._y -= steps * sin(-radians(this._d));
         if (this._ps) {
-            this._cd.stroke(this._fg);
+            this._cd.stroke(this._pc);
             this._cd.strokeWeight(this._pt);
             this._cd.line(this._x, this._y, px, py);
         }
     }
 
     left(angle) {
-        this._dir += angle;
+        angle = this.getVariable(angle);
+        this._d += angle;
     }
 
     right(angle) {
-        this._dir -= angle;
-    }
-
-    adjustDirection() {
-        if (this._dir >= 360) {
-            this._dir = this._dir % 360;
-        }
-        if (this._dir < 0) {
-            this._dir = 360 - (-this._dir % 360);
-        }
+        angle = this.getVariable(angle);
+        this._d -= angle;
     }
 
     repeat(times, exp) {
+        times = this.getVariable(times);
         for (let count = 0; count < times; ++count) {
             this.execute(exp);
         }
     }
 
+    export(filename) {
+        filename = this.getVariable(filename);
+        saveCanvas(this._cd, filename, 'png');
+    }
+
+    setVariable(name, value) {
+        this._v[name] = value;
+    }
+
+    getVariable(arg) {
+        if (int(arg).toString() !== 'NaN') {
+            return int(arg);
+        } else if (arg.startsWith('$')) {
+            return this._v[arg.substr(1)];
+        }
+        return arg;
+    }
+
+    updatePosition(elem) {
+        let x = int((this._x - width / 2).toFixed(2));
+        let y = int((height / 2 - this._y).toFixed(2));
+        elem.html(`(${x === 0 ? '0' : x}, ${y === 0 ? '0' : y}) : ${this._d}`);
+    }
+
     execute(exp) {
-        this.run(this.tokenize(exp));
-        this.adjustDirection();
+        let sanitized = exp.replace(/=/g, ' = ').replace(/\[/g, ' [ ').replace(/\]/g, ' ] ').replace(/\s+/g, ' ').trim();
+        let tokens = this.tokenize(sanitized);
+        this.run(tokens);
+        this.adjustTurtle();
         this.updateTurtle();
     }
 
@@ -135,7 +171,7 @@ class Turtle {
         let commands = [];
         let index = 0;
         while (index < tokens.length) {
-            let cmd, steps, angle, times, col, thickness, filename, startIndex, endIndex, innerExp;
+            let cmd, steps, angle, times, col, thickness, filename, startIndex, endIndex, innerExp, name, value;
             switch (tokens[index]) {
                 case 'home':
                 case 'cs':
@@ -171,7 +207,7 @@ class Turtle {
                     steps = tokens[index + 1];
                     commands.push({
                         cmd: cmd,
-                        steps: int(steps)
+                        steps: steps
                     });
                     index++;
                     break;
@@ -181,7 +217,7 @@ class Turtle {
                     angle = tokens[index + 1];
                     commands.push({
                         cmd: cmd,
-                        angle: int(angle)
+                        angle: angle
                     });
                     index++;
                     break;
@@ -192,6 +228,7 @@ class Turtle {
                         cmd: cmd,
                         filename: filename
                     });
+                    index++;
                     break;
                 case 'repeat':
                     cmd = tokens[index];
@@ -202,12 +239,25 @@ class Turtle {
                         innerExp = tokens.slice(startIndex + 1, endIndex).join(' ');
                         commands.push({
                             cmd: cmd,
-                            times: int(times),
+                            times: times,
                             exp: innerExp
                         });
                         index = endIndex;
                     }
                     break;
+                case 'var':
+                    cmd = tokens[index];
+                    name = tokens[index + 1];
+                    value = tokens[index + 3];
+                    commands.push({
+                        cmd: cmd,
+                        name: name,
+                        value: value
+                    });
+                    index += 3;
+                    break;
+                default:
+                    console.log('unknown token:', tokens[index]);
             }
             index++;
         }
@@ -215,7 +265,7 @@ class Turtle {
     }
 
     run(commands) {
-        commands.forEach(async command => {
+        commands.forEach(command => {
             switch (command.cmd) {
                 case 'home':
                     this.home();
@@ -262,6 +312,12 @@ class Turtle {
                 case 'repeat':
                     this.repeat(command.times, command.exp);
                     break;
+                case 'var':
+                    this.setVariable(command.name, command.value);
+                    break;
+                default:
+
+                    break;
             }
         });
     }
@@ -280,15 +336,5 @@ class Turtle {
             }
         }
         return -1;
-    }
-
-    export(filename) {
-        saveCanvas(this._cd, filename, 'png');
-    }
-
-    updatePosition(elem) {
-        let x = int((this._x - width / 2).toFixed(2));
-        let y = int((height / 2 - this._y).toFixed(2));
-        elem.html(`(${x === 0 ? '0.00' : x}, ${y === 0 ? '0.00' : y}) : ${this._dir}`);
     }
 }
