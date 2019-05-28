@@ -125,7 +125,7 @@ function tokenizeExpression(exp) {
                     });
                     index += 2;
                 } else {
-                    console.log('unknown token:', tokens[index]);
+                    console.error('unknown token:', tokens[index]);
                 }
         }
         index++;
@@ -138,12 +138,22 @@ function evaluateExpression(exp, vars) {
     let varKeys = exp.match(/\$[_a-zA-Z0-9]+/g);
     if (varKeys) {
         varKeys.forEach(k => {
-            let v = vars[k.substr(1)];
             let r = RegExp('\\' + k, 'g');
+            let v = vars[k.substr(1)];
+            if (v === undefined) {
+                throw `variable '${k}' is not defined`;
+            }
             newExp = newExp.replace(r, v);
         });
     }
-    let result = (0, eval)(newExp);
-    console.log(exp, '=>', newExp, '=', result);
-    return result;
+    try {
+        let result = math.eval(newExp);
+        if (result != Infinity) {
+            return result;
+        } else {
+            throw 'bad expression';
+        }
+    } catch (err) {
+        throw err.message;
+    }
 }
