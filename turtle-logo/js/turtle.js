@@ -66,13 +66,21 @@ class Turtle {
     }
 
     penColor(col) {
-        col = this.resolve(col);
-        this._pc = col;
+        try {
+            col = this.resolve(col);
+            this._pc = col;
+        } catch (err) {
+            console.error('pc:', err);
+        }
     }
 
     penThickness(thickness) {
-        thickness = this.resolve(thickness);
-        this._pt = thickness;
+        try {
+            thickness = this.resolve(thickness);
+            this._pt = thickness;
+        } catch (err) {
+            console.error('pt:', err);
+        }
     }
 
     home() {
@@ -86,62 +94,94 @@ class Turtle {
     }
 
     backgroundColor(col) {
-        col = this.resolve(col);
-        this._bc = col;
-        this._cd.background(color(this._bc));
+        try {
+            col = this.resolve(col);
+            this._bc = col;
+            this._cd.background(color(this._bc));
+        } catch (err) {
+            console.error('bc:', err);
+        }
     }
 
     forward(steps) {
-        steps = this.resolve(steps);
-        let px = this._x;
-        let py = this._y;
-        this._x += steps * cos(radians(this._d));
-        this._y += steps * sin(-radians(this._d));
-        if (this._ps) {
-            this._cd.stroke(this._pc);
-            this._cd.strokeWeight(this._pt);
-            this._cd.line(this._x, this._y, px, py);
+        try {
+            steps = this.resolve(steps);
+            let px = this._x;
+            let py = this._y;
+            this._x += steps * cos(radians(this._d));
+            this._y += steps * sin(-radians(this._d));
+            if (this._ps) {
+                this._cd.stroke(this._pc);
+                this._cd.strokeWeight(this._pt);
+                this._cd.line(this._x, this._y, px, py);
+            }
+        } catch (err) {
+            console.error('fd:', err);
         }
     }
 
     backward(steps) {
-        steps = this.resolve(steps);
-        let px = this._x;
-        let py = this._y;
-        this._x -= steps * cos(radians(this._d));
-        this._y -= steps * sin(-radians(this._d));
-        if (this._ps) {
-            this._cd.stroke(this._pc);
-            this._cd.strokeWeight(this._pt);
-            this._cd.line(this._x, this._y, px, py);
+        try {
+            steps = this.resolve(steps);
+            let px = this._x;
+            let py = this._y;
+            this._x -= steps * cos(radians(this._d));
+            this._y -= steps * sin(-radians(this._d));
+            if (this._ps) {
+                this._cd.stroke(this._pc);
+                this._cd.strokeWeight(this._pt);
+                this._cd.line(this._x, this._y, px, py);
+            }
+        } catch (err) {
+            console.error('bk:', err);
         }
     }
 
     left(angle) {
-        angle = this.resolve(angle);
-        this._d += angle;
+        try {
+            angle = this.resolve(angle);
+            this._d += angle;
+        } catch (err) {
+            console.error('lt:', err);
+        }
     }
 
     right(angle) {
-        angle = this.resolve(angle);
-        this._d -= angle;
+        try {
+            angle = this.resolve(angle);
+            this._d -= angle;
+        } catch (err) {
+            console.error('rt:', err);
+        }
     }
 
     repeat(times, exp) {
-        times = this.resolve(times);
-        for (let count = 0; count < times; ++count) {
-            this.execute(exp);
+        try {
+            times = this.resolve(times);
+            for (let count = 0; count < times; ++count) {
+                this.execute(exp);
+            }
+        } catch (err) {
+            console.error('repeat:', err);
         }
     }
 
     export(filename) {
-        filename = this.resolve(filename);
-        exportPNG(this._c1, filename);
+        try {
+            filename = this.resolve(filename);
+            exportPNG(this._cd, filename);
+        } catch (err) {
+            console.error('export:', err);
+        }
     }
 
     putVariable(name, value) {
-        value = this.resolve(value);
-        this._v[name] = value;
+        try {
+            value = this.resolve(value);
+            this._v[name] = value;
+        } catch (err) {
+            console.error('put:', err);
+        }
     }
 
     getVariable(name) {
@@ -149,12 +189,23 @@ class Turtle {
     }
 
     resolve(arg) {
-        if (int(arg).toString() !== 'NaN') {
+        if (arg === undefined) {
+            throw 'missing argument';
+        }
+        else if (int(arg).toString() !== 'NaN') {
             return int(arg);
         } else if (arg.startsWith('$')) {
+            let v = arg.substr(1);
+            if (this._v[v] === undefined) {
+                throw `variable '${v}' is not defined`;
+            }
             return this.getVariable(arg.substr(1));
         } else if (arg.startsWith('(') && arg.endsWith(')')) {
-            return evaluateExpression(arg, this._v);
+            try {
+                return evaluateExpression(arg, this._v);
+            } catch (err) {
+                throw `bad expression '${arg}': ${err}`;
+            }
         }
         return arg;
     }
@@ -167,6 +218,7 @@ class Turtle {
 
     execute(exp) {
         let sanitized = exp.replace(/=/g, ' = ').replace(/\[/g, ' [ ').replace(/\]/g, ' ] ').replace(/\s+/g, ' ').trim();
+        console.log('execute:', sanitized);
         let tokens = tokenizeExpression(sanitized);
         this.run(tokens);
         this.adjustTurtle();
@@ -225,7 +277,7 @@ class Turtle {
                     this.putVariable(command.name, command.value);
                     break;
                 default:
-                    console.log('unknown command:', JSON.stringify(command));
+                    console.error('unknown command:', JSON.stringify(command));
                     break;
             }
         });

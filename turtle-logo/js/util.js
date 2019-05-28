@@ -141,18 +141,17 @@ function evaluateExpression(exp, vars) {
             let r = RegExp('\\' + k, 'g');
             let v = vars[k.substr(1)];
             if (v === undefined) {
-                throw `variable '${k}' is not defined`;
+                throw `variable '${k.substr(1)}' is not defined`;
             }
             newExp = newExp.replace(r, v);
         });
     }
     try {
         let result = math.eval(newExp);
-        if (result != Infinity) {
-            return result;
-        } else {
-            throw 'bad expression';
+        if (result.toString() === 'Infinity' || result.toString() === 'NaN') {
+            throw { message: 'cannot divide by 0' };
         }
+        return result;
     } catch (err) {
         throw err.message;
     }

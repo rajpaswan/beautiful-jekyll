@@ -1,6 +1,7 @@
 # TURTLE LOGO
 
-A [LOGO](https://en.wikipedia.org/wiki/Logo_(programming_language)) simulator app built using [p5.js](https://p5js.org/). Live demo at [here](https://rajpaswan.github.io/turtle-logo/).
+A [LOGO](https://en.wikipedia.org/wiki/Logo_(programming_language)) simulator app built using [p5.js](https://p5js.org/) and [math.js](https://mathjs.org/).  
+Checkout the live app [here](https://rajpaswan.github.io/turtle-logo/).
 
 #### COMMANDS
 | Command | Purpose | Examples |
