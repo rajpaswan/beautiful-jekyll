@@ -3,7 +3,7 @@
 A [LOGO](https://en.wikipedia.org/wiki/Logo_(programming_language)) simulator app built using [p5.js](https://p5js.org/). Live demo at [here](https://rajpaswan.github.io/turtle-logo/).
 
 #### COMMANDS
-| command | Purpose | Examples |
+| Command | Purpose | Examples |
 |-------------|---------|----------|
 | `home` | move to home | |
 | `cs` | clear screen | |
