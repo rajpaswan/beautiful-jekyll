@@ -66,12 +66,12 @@ class Turtle {
     }
 
     penColor(col) {
-        col = this.getVariable(col);
+        col = this.resolve(col);
         this._pc = col;
     }
 
     penThickness(thickness) {
-        thickness = this.getVariable(thickness);
+        thickness = this.resolve(thickness);
         this._pt = thickness;
     }
 
@@ -86,13 +86,13 @@ class Turtle {
     }
 
     backgroundColor(col) {
-        col = this.getVariable(col);
+        col = this.resolve(col);
         this._bc = col;
         this._cd.background(color(this._bc));
     }
 
     forward(steps) {
-        steps = this.getVariable(steps);
+        steps = this.resolve(steps);
         let px = this._x;
         let py = this._y;
         this._x += steps * cos(radians(this._d));
@@ -105,7 +105,7 @@ class Turtle {
     }
 
     backward(steps) {
-        steps = this.getVariable(steps);
+        steps = this.resolve(steps);
         let px = this._x;
         let py = this._y;
         this._x -= steps * cos(radians(this._d));
@@ -118,36 +118,43 @@ class Turtle {
     }
 
     left(angle) {
-        angle = this.getVariable(angle);
+        angle = this.resolve(angle);
         this._d += angle;
     }
 
     right(angle) {
-        angle = this.getVariable(angle);
+        angle = this.resolve(angle);
         this._d -= angle;
     }
 
     repeat(times, exp) {
-        times = this.getVariable(times);
+        times = this.resolve(times);
         for (let count = 0; count < times; ++count) {
             this.execute(exp);
         }
     }
 
     export(filename) {
-        filename = this.getVariable(filename);
+        filename = this.resolve(filename);
         exportPNG(this._c1, filename);
     }
 
     putVariable(name, value) {
+        value = this.resolve(value);
         this._v[name] = value;
     }
 
-    getVariable(arg) {
+    getVariable(name) {
+        return this._v[name];
+    }
+
+    resolve(arg) {
         if (int(arg).toString() !== 'NaN') {
             return int(arg);
         } else if (arg.startsWith('$')) {
-            return this._v[arg.substr(1)];
+            return this.getVariable(arg.substr(1));
+        } else if (arg.startsWith('(') && arg.endsWith(')')) {
+            return evaluateExpression(arg, this._v);
         }
         return arg;
     }
@@ -160,7 +167,7 @@ class Turtle {
 
     execute(exp) {
         let sanitized = exp.replace(/=/g, ' = ').replace(/\[/g, ' [ ').replace(/\]/g, ' ] ').replace(/\s+/g, ' ').trim();
-        let tokens = tokenize(sanitized);
+        let tokens = tokenizeExpression(sanitized);
         this.run(tokens);
         this.adjustTurtle();
         this.updateTurtle();
@@ -214,10 +221,11 @@ class Turtle {
                 case 'repeat':
                     this.repeat(command.times, command.exp);
                     break;
-                case 'var':
+                case 'assign':
                     this.putVariable(command.name, command.value);
                     break;
                 default:
+                    console.log('unknown command:', JSON.stringify(command));
                     break;
             }
         });

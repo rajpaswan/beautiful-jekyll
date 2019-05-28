@@ -23,7 +23,7 @@ function setup() {
   cmdInput.elt.placeholder = 'your code here';
   cmdInput.elt.focus();
 
-  posText = createSpan('(0.00, 0.00) : 90');
+  posText = createSpan('(0, 0) : 90');
   posText.elt.id = 'position';
 }
 
@@ -73,7 +73,5 @@ function keyPressed() {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-  //canvas1.resizeCanvas(windowWidth, windowHeight);
-  //canvas2.resizeCanvas(windowWidth, windowHeight);
   redraw();
 }

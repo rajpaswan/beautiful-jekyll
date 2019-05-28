@@ -34,12 +34,12 @@ function findClosingRoundBracketIndex(args, start) {
     return -1;
 }
 
-function tokenize(exp) {
+function tokenizeExpression(exp) {
     let tokens = exp.split(' ');
     let commands = [];
     let index = 0;
     while (index < tokens.length) {
-        let cmd, steps, angle, times, col, thickness, filename, startIndex, endIndex, innerExp, name, value;
+        let cmd, steps, angle, times, col, thickness, filename, startIndex, endIndex, innerExp, name, value, lhs, rhs, op;
         switch (tokens[index]) {
             case 'home':
             case 'cs':
@@ -113,21 +113,37 @@ function tokenize(exp) {
                     index = endIndex;
                 }
                 break;
-            case 'var':
-                cmd = tokens[index];
-                name = tokens[index + 1];
-                value = tokens[index + 3];
-                commands.push({
-                    cmd: cmd,
-                    name: name,
-                    value: value
-                });
-                index += 3;
-                break;
             default:
-                console.log('unknown token:', tokens[index]);
+                lhs = tokens[index];
+                op = tokens[index + 1];
+                rhs = tokens[index + 2];
+                if (lhs.startsWith('$') && op === '=') {
+                    commands.push({
+                        cmd: 'assign',
+                        name: lhs.substr(1),
+                        value: rhs
+                    });
+                    index += 2;
+                } else {
+                    console.log('unknown token:', tokens[index]);
+                }
         }
         index++;
     }
     return commands;
+}
+
+function evaluateExpression(exp, vars) {
+    let newExp = exp;
+    let varKeys = exp.match(/\$[_a-zA-Z0-9]+/g);
+    if (varKeys) {
+        varKeys.forEach(k => {
+            let v = vars[k.substr(1)];
+            let r = RegExp('\\' + k, 'g');
+            newExp = newExp.replace(r, v);
+        });
+    }
+    let result = (0, eval)(newExp);
+    console.log(exp, '=>', newExp, '=', result);
+    return result;
 }
