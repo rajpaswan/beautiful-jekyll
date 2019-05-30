@@ -21,6 +21,7 @@ Checkout the live app [here](https://rajpaswan.github.io/turtle-logo/).
 | `rt <degrees>` | right turn | `rt 90` |
 | `repeat <times>[<commands>]` | repeat commands  | `repeat 4[fd 100 rt 90]` |
 | `export <filename>` | export canvas as png image | `export square` |
+| `help` | opens help page | |
 
 ### EXPRESSIONS
 | Expression | Purpose | Examples |

@@ -2,6 +2,10 @@ function exportPNG(canvas, filename) {
     saveCanvas(canvas, filename, 'png');
 }
 
+function openHelpPage() {
+    window.open('help', '_blank');
+}
+
 function findClosingSquareBracketIndex(args, start) {
     let stack = [];
     stack.push(start);
@@ -40,7 +44,7 @@ function tokenizeExpression(exp) {
     let index = 0;
     while (index < tokens.length) {
         let cmd, steps, angle, times, col, thickness, filename, startIndex, endIndex, innerExp, name, value, lhs, rhs, op;
-        switch (tokens[index]) {
+        switch (tokens[index].toLowerCase()) {
             case 'home':
             case 'cs':
             case 'st':

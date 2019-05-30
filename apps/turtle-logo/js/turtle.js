@@ -219,6 +219,10 @@ class Turtle {
     execute(exp) {
         let sanitized = exp.replace(/=/g, ' = ').replace(/\[/g, ' [ ').replace(/\]/g, ' ] ').replace(/\s+/g, ' ').trim();
         console.log('execute:', sanitized);
+        if (sanitized === 'help') {
+            openHelpPage();
+            return;
+        }
         let tokens = tokenizeExpression(sanitized);
         this.run(tokens);
         this.adjustTurtle();
@@ -227,7 +231,7 @@ class Turtle {
 
     run(commands) {
         commands.forEach(command => {
-            switch (command.cmd) {
+            switch (command.cmd.toLowerCase()) {
                 case 'home':
                     this.home();
                     break;
