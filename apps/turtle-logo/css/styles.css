@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'Monofur';
+  src: url('../../../fonts/monofur.ttf') format('truetype');
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -14,7 +19,7 @@ input#command {
   bottom: 0;
   font-size: large;
   font-weight: bold;
-  font-family: 'Consolas','FreeMono';
+  font-family: 'Monofur', monospace;
   border: solid transparent 8px;
   background-color: rgba(0, 0, 0, 10%);
   color: black;
@@ -32,7 +37,7 @@ span#position {
   padding: 8px;
   font-size: large;
   font-weight: bold;
-  font-family: 'Consolas','FreeMono';
+  font-family: 'Monofur', monospace;
   background-color: rgba(0, 0, 0, 10%);
   color: black;
 }
