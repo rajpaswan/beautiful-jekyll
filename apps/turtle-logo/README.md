@@ -3,7 +3,7 @@
 A [LOGO](https://en.wikipedia.org/wiki/Logo_(programming_language)) simulator app built using [p5.js](https://p5js.org/) and [math.js](https://mathjs.org/).  
 Checkout the live app [here](https://rajpaswan.github.io/turtle-logo/).
 
-#### COMMANDS
+### COMMANDS
 | Command | Purpose | Examples |
 |-------------|---------|----------|
 | `home` | move to home | |
@@ -22,7 +22,7 @@ Checkout the live app [here](https://rajpaswan.github.io/turtle-logo/).
 | `repeat <times>[<commands>]` | repeat commands  | `repeat 4[fd 100 rt 90]` |
 | `export <filename>` | export canvas as png image | `export square` |
 
-#### EXPRESSIONS
+### EXPRESSIONS
 | Expression | Purpose | Examples |
 |------------|---------|----------|
 | `$<variable>=<value>` | assign value to variable | `$x=100` |
@@ -30,6 +30,6 @@ Checkout the live app [here](https://rajpaswan.github.io/turtle-logo/).
 | `<command> $<variable>` | command with variable as an argument  | `fd $x` |
 | `<command> (<expression>)` | command with expression as an argument  | `fd ($x+10*$y)` |
 
-#### CONTACT
+### CONTACT
 Raj Paswan  
 [rajpaswan.in@gmail.com](mailto://rajpaswan.in@gmail.com)
