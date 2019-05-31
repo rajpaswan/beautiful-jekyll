@@ -64,6 +64,7 @@ function tokenizeExpression(exp) {
                     cmd: cmd,
                     col: col
                 });
+                index++;
                 break;
             case 'pt':
                 cmd = tokens[index];
@@ -72,6 +73,7 @@ function tokenizeExpression(exp) {
                     cmd: cmd,
                     thickness: thickness
                 });
+                index++;
                 break;
             case 'fd':
             case 'bk':

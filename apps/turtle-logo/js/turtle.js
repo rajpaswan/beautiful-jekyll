@@ -77,6 +77,9 @@ class Turtle {
     penThickness(thickness) {
         try {
             thickness = this.resolve(thickness);
+            if(isNaN(thickness)){
+                throw `'${thickness}' is not defined`;
+            }
             this._pt = thickness;
         } catch (err) {
             console.error('pt:', err);
@@ -106,6 +109,9 @@ class Turtle {
     forward(steps) {
         try {
             steps = this.resolve(steps);
+            if(isNaN(steps)){
+                throw `'${steps}' is not defined`;
+            }
             let px = this._x;
             let py = this._y;
             this._x += steps * cos(radians(this._d));
@@ -123,6 +129,9 @@ class Turtle {
     backward(steps) {
         try {
             steps = this.resolve(steps);
+            if(isNaN(steps)){
+                throw `'${steps}' is not defined`;
+            }
             let px = this._x;
             let py = this._y;
             this._x -= steps * cos(radians(this._d));
@@ -140,6 +149,9 @@ class Turtle {
     left(angle) {
         try {
             angle = this.resolve(angle);
+            if(isNaN(angle)){
+                throw `'${angle}' is not defined`;
+            }
             this._d += angle;
         } catch (err) {
             console.error('lt:', err);
@@ -149,6 +161,9 @@ class Turtle {
     right(angle) {
         try {
             angle = this.resolve(angle);
+            if(isNaN(angle)){
+                throw `'${angle}' is not defined`;
+            }
             this._d -= angle;
         } catch (err) {
             console.error('rt:', err);
@@ -158,6 +173,9 @@ class Turtle {
     repeat(times, exp) {
         try {
             times = this.resolve(times);
+            if(isNaN(times)){
+                throw `'${times}' is not defined`;
+            }
             for (let count = 0; count < times; ++count) {
                 this.execute(exp);
             }
