@@ -3,7 +3,8 @@
   src: url('../../../fonts/monofur.ttf') format('truetype');
 }
 
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
 }
@@ -18,7 +19,7 @@ input#command {
   width: 100%;
   bottom: 0;
   font-size: large;
-  font-weight: bold;
+  font-weight: 600;
   font-family: 'Monofur', monospace;
   border: solid transparent 8px;
   background-color: rgba(0, 0, 0, 10%);
@@ -36,7 +37,7 @@ span#position {
   right: 0;
   padding: 8px;
   font-size: large;
-  font-weight: bold;
+  font-weight: 600;
   font-family: 'Monofur', monospace;
   background-color: rgba(0, 0, 0, 10%);
   color: black;

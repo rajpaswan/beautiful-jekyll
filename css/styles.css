@@ -5,8 +5,10 @@
 
 html,
 body {
-    margin: 0 auto;
-    margin-top: 100px;
-    width: 480px;
     font-family: 'Monofur', monospace;
+}
+
+body {
+    margin: 0 auto;
+    padding: 50px;
 }
