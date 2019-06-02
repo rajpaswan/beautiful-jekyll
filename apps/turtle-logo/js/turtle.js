@@ -3,14 +3,14 @@ class Turtle {
     constructor(cd, ct, x, y, d, pc, bc) {
         this._cd = cd;                  // canvas for drawing
         this._ct = ct;                  // canvas for turtle
-        this._x = x || width / 2;       // turtle x
-        this._y = y || height / 2;      // turtle y
+        this._x = x || windowWidth / 2;       // turtle x
+        this._y = y || windowHeight / 2;      // turtle y
         this._d = d || 90;              // turtle direction
         this._pc = pc || 'black';       // pen color
         this._bc = bc || 'transparent'; // background color
         this._ts = true;                // turtle status
         this._ps = true;                // pen status
-        this._pt = 4;                   // pen thickness
+        this._pt = 3;                   // pen thickness
         this._v = {};                   // variables
         this._m = {};                   // methods 
         this.updateTurtle();
@@ -77,7 +77,7 @@ class Turtle {
     penThickness(thickness) {
         try {
             thickness = this.resolve(thickness);
-            if(isNaN(thickness)){
+            if (isNaN(thickness)) {
                 throw `'${thickness}' is not defined`;
             }
             this._pt = thickness;
@@ -109,7 +109,7 @@ class Turtle {
     forward(steps) {
         try {
             steps = this.resolve(steps);
-            if(isNaN(steps)){
+            if (isNaN(steps)) {
                 throw `'${steps}' is not defined`;
             }
             let px = this._x;
@@ -129,7 +129,7 @@ class Turtle {
     backward(steps) {
         try {
             steps = this.resolve(steps);
-            if(isNaN(steps)){
+            if (isNaN(steps)) {
                 throw `'${steps}' is not defined`;
             }
             let px = this._x;
@@ -149,7 +149,7 @@ class Turtle {
     left(angle) {
         try {
             angle = this.resolve(angle);
-            if(isNaN(angle)){
+            if (isNaN(angle)) {
                 throw `'${angle}' is not defined`;
             }
             this._d += angle;
@@ -161,7 +161,7 @@ class Turtle {
     right(angle) {
         try {
             angle = this.resolve(angle);
-            if(isNaN(angle)){
+            if (isNaN(angle)) {
                 throw `'${angle}' is not defined`;
             }
             this._d -= angle;
@@ -173,7 +173,7 @@ class Turtle {
     repeat(times, exp) {
         try {
             times = this.resolve(times);
-            if(isNaN(times)){
+            if (isNaN(times)) {
                 throw `'${times}' is not defined`;
             }
             for (let count = 0; count < times; ++count) {
@@ -181,6 +181,28 @@ class Turtle {
             }
         } catch (err) {
             console.error('repeat:', err);
+        }
+    }
+
+    arc(angle, radius) {
+        try {
+            angle = this.resolve(angle);
+            if (isNaN(angle)) {
+                throw `'${angle}' is not defined`;
+            }
+            radius = this.resolve(radius);
+            if (isNaN(radius)) {
+                throw `'${radius}' is not defined`;
+            }
+            let cmd; 
+            if(angle >= 0){
+                cmd = `pu fd ${radius} rt 90 pd repeat ${angle} [fd (2*pi*${radius}/360) rt 1] pu rt 90 fd ${radius} lt 180 pd`;
+            } else {
+                cmd = `pu fd ${radius} lt 90 pd repeat ${-angle} [fd (2*pi*${radius}/360) lt 1] pu lt 90 fd ${radius} rt 180 pd`;
+            }
+            this.execute(cmd);
+        } catch (err) {
+            console.error('arc:', err);
         }
     }
 
@@ -210,8 +232,8 @@ class Turtle {
         if (arg === undefined) {
             throw 'missing argument';
         }
-        else if (int(arg).toString() !== 'NaN') {
-            return int(arg);
+        else if (Number(arg).toString() !== 'NaN') {
+            return Number(arg);
         } else if (arg.startsWith('$')) {
             let v = arg.substr(1);
             if (this._v[v] === undefined) {
@@ -229,9 +251,10 @@ class Turtle {
     }
 
     updatePosition(elem) {
-        let x = int((this._x - width / 2).toFixed(2));
-        let y = int((height / 2 - this._y).toFixed(2));
-        elem.html(`(${x === 0 ? '0' : x}, ${y === 0 ? '0' : y}) : ${this._d}`);
+        let x = Number((this._x - windowWidth / 2).toFixed(2)).toFixed(2);
+        let y = Number((windowHeight / 2 - this._y).toFixed(2)).toFixed(2);
+        let d = Number(this._d.toFixed(2)).toFixed(2);
+        elem.html(`(${x === 0 ? '0.00' : x}, ${y === 0 ? '0.00' : y}) : ${d === 0 ? '0.00' : d}`);
     }
 
     execute(exp) {
@@ -241,8 +264,8 @@ class Turtle {
             openHelpPage();
             return;
         }
-        let tokens = tokenizeExpression(sanitized);
-        this.run(tokens);
+        let commands = tokenizeExpression(sanitized);
+        this.run(commands);
         this.adjustTurtle();
         this.updateTurtle();
     }
@@ -294,6 +317,9 @@ class Turtle {
                     break;
                 case 'repeat':
                     this.repeat(command.times, command.exp);
+                    break;
+                case 'arc':
+                    this.arc(command.angle, command.radius);
                     break;
                 case 'assign':
                     this.putVariable(command.name, command.value);

@@ -43,7 +43,7 @@ function tokenizeExpression(exp) {
     let commands = [];
     let index = 0;
     while (index < tokens.length) {
-        let cmd, steps, angle, times, col, thickness, filename, startIndex, endIndex, innerExp, name, value, lhs, rhs, op;
+        let cmd, steps, angle, times, col, thickness, filename, radius, startIndex, endIndex, innerExp, lhs, rhs, op;
         switch (tokens[index].toLowerCase()) {
             case 'home':
             case 'cs':
@@ -118,6 +118,17 @@ function tokenizeExpression(exp) {
                     });
                     index = endIndex;
                 }
+                break;
+            case 'arc':
+                cmd = tokens[index];
+                angle = tokens[index + 1];
+                radius = tokens[index + 2];
+                commands.push({
+                    cmd: cmd,
+                    angle: angle,
+                    radius: radius
+                });
+                index += 2;
                 break;
             default:
                 lhs = tokens[index];
